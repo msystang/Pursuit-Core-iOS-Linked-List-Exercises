@@ -11,6 +11,7 @@ import Foundation
 public class Node<T> {
     var key: T
     var next: Node?
+    var previous: Node?
     init(key: T) {
         self.key = key
     }
@@ -18,6 +19,7 @@ public class Node<T> {
 
 public class LinkedList<T: Equatable> {
     var head: Node<T>?
+    
     func printAllKeys() {
         var currentNode = head
         while currentNode != nil {
@@ -26,21 +28,100 @@ public class LinkedList<T: Equatable> {
         }
     }
 
-    var count: Int {return 0}
+    var count: Int {
+        var count = 0
+        var currentNode = head
+        while currentNode != nil {
+            currentNode = currentNode?.next
+            count += 1
+        }
+        return count
+    }
     
-    func append(element newKey: T) {}
+    func append(element newKey: T) {
+        if head == nil {
+            head = Node(key: newKey)
+            return
+        }
+        var currentNode = head
+        
+        while currentNode?.next != nil {
+            currentNode = currentNode?.next
+        }
+        currentNode?.next = Node(key: newKey)
+    }
     
-    func getNode<T>(at index: Int) -> Node<T>? {return nil}
+    func getNode(at index: Int) -> Node<T>? {
+        guard index >= 0 else { return nil }
+        var counter = 0
+        var currentNode = head
+        
+        while counter < index {
+            currentNode = currentNode?.next
+            counter += 1
+        }
+        return currentNode
+    }
     
-    func contains<T>(element targetKey: T) -> Bool {return false}
+    func contains(element targetKey: T) -> Bool {
+        var currentNode = head
+        
+        while currentNode?.next != nil {
+            if targetKey == currentNode?.key {
+                return true
+            }
+            currentNode = currentNode?.next
+        }
+        return false
+    }
     
-    func equals<T>(otherList: LinkedList<T>) -> Bool {return true}
+    func equals(otherList: LinkedList<T>) -> Bool {
+        var currentNode = head
+        var otherCurrentNode = otherList.head
+        
+        guard self.count == otherList.count else { return false }
+        
+        while currentNode != nil {
+            if currentNode!.key != otherCurrentNode!.key {
+                return false
+            }
+            currentNode = currentNode!.next
+            otherCurrentNode = otherCurrentNode!.next
+        }
+        return true
+    }
     
-    func toArr<T>() -> [T] {return Array<T>()}
+    func toArr() -> [T] {
+        var arr = [T]()
+        var currentNode = head
+        
+        while currentNode != nil {
+            if let currentNodeKey = currentNode?.key {
+                arr.append(currentNodeKey)
+            }
+            currentNode = currentNode?.next
+        }
+        return arr
+    }
     
-    func reversed<T>() -> LinkedList<T> {return LinkedList<T>()}
+    func reversed() {
+        var previous: Node<T>?
+        var currentNode = head
+        var next = currentNode?.next
+        
+        while currentNode != nil {
+            next = currentNode?.next
+            currentNode?.next = previous
+            previous = currentNode
+            currentNode = next
+        }
+        head = previous
+
+    }
     
-    func removeAll() {}
+    func removeAll() {
+        head = nil
+    }
     
     //Challenge Questions
     func removeDuplicatesFromSortedList() {}
